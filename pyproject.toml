@@ -14,6 +14,7 @@ PyJWT = "^2.8.0"
 pymysql = "^1.1.1"
 cryptography = "^44.0.2"
 passlib = "^1.7.4"
+fastapi-cache2 = "^0.2.2"
 
 [tool.poetry.dev-dependencies]
 mypy = "^1.8.0"

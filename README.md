@@ -11,6 +11,9 @@
 
 `curl -X POST http://127.0.0.1:8000/Login -d '{"email": "user@example.com", "password": "newpassword"}'`
 
+`curl -X POST http://127.0.0.1:8000/AddPost -H "Authorization: Bearer <your_token>" -H "Content-Type: application/json" -d '{"text": "This is a sample post content"}'`
+
+`curl -X DELETE http://127.0.0.1:8000/DeletePost -H "Authorization: Bearer <your_token>" -H "Content-Type: application/json" -d '{"postID": 1}'`
 
 
 

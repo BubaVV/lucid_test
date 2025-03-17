@@ -18,10 +18,8 @@ class Post(SQLModel, table=True):
     __tablename__ = "posts"
 
     id: Optional[int] = Field(primary_key=True, default=None)
-    title: str
-    content: str
+    text: str
     author_id: str
-    created_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
 def init_db():
     SQLModel.metadata.create_all(engine)
