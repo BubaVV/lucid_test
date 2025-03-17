@@ -8,6 +8,7 @@ from passlib.context import CryptContext
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.inmemory import InMemoryBackend
 from fastapi_cache.decorator import cache
+from validation import PostCreate, PostDelete, UserSignup, UserLogin
 
 posts = APIRouter()
 auth = APIRouter()
@@ -19,6 +20,12 @@ async def create_post(request: Request, auth=Depends(JWTBearer())):
         raise HTTPException(status_code=413, detail="Payload too large")
 
     post_data = await request.json()
+
+    # Validate post data using Pydantic model
+    try:
+        post = PostCreate(**post_data)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
 
     # Check for valid token and get user email
     if 'email' not in auth:
@@ -44,7 +51,7 @@ async def create_post(request: Request, auth=Depends(JWTBearer())):
 
     return {"postID": new_post.id}
 
-@posts.post('/GetPosts')
+@posts.get('/GetPosts')
 @cache(expire=300)
 async def get_user_posts(request: Request, auth=Depends(JWTBearer())):
     # Check for valid token and get user email
@@ -76,6 +83,11 @@ async def delete_post(request: Request, auth=Depends(JWTBearer())):
         raise HTTPException(status_code=413, detail="Payload too large")
 
     post_data = await request.json()
+    # Validate post data using Pydantic model
+    try:
+        post_delete = PostDelete(**post_data)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     postID = post_data.get('postID')
 
     if not postID:
@@ -116,6 +128,11 @@ FastAPICache.init(InMemoryBackend())
 @auth.post('/Signup')
 async def signup(request: Request):
     data = await request.json()
+    # Validate user signup data using Pydantic model
+    try:
+        user_signup = UserSignup(**data)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     email = data.get('email')
     password = data.get('password')
 
@@ -144,6 +161,11 @@ async def signup(request: Request):
 @auth.post('/Login')
 async def login(request: Request):
     data = await request.json()
+    # Validate user login data using Pydantic model
+    try:
+        user_login = UserLogin(**data)
+    except ValueError as e:
+        raise HTTPException(status_code=422, detail=str(e))
     email = data.get('email')
     password = data.get('password')
 
